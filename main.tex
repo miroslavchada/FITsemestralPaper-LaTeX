@@ -1,0 +1,237 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage{ifthen}
+\newboolean{twosidemode}
+
+\setboolean{twosidemode}{false} % true = two-sided document (print), false = one-sided document (online)
+
+% --- Setting up margins ---
+% Parameters for geometry package, prepared separately to avoid issues with conditional logic
+\newcommand{\geomparams}{
+    a4paper, top=32mm, bottom=27mm
+}
+
+\ifthenelse{\boolean{twosidemode}}{
+	% If true: add twoside and binding offset
+    \edef\finalgeom{\geomparams, left=20mm, right=20mm, twoside, bindingoffset=10mm}
+}{
+	% If false: just the basic settings
+    \edef\finalgeom{\geomparams, left=25mm, right=25mm}
+}
+
+% Pass the parameters to the geometry package using expansion
+\usepackage[\finalgeom]{geometry}
+
+% --- Two-sided printing and intelligent start on the right side ---
+% Command for intelligent start on the right side
+\newcommand{\openright}{%
+    \ifthenelse{\boolean{twosidemode}}{%
+        \cleardoublepage
+    }{%
+        \clearpage
+    }
+}
+
+% Adjustment for truly empty inserted page (without header and number)
+\makeatletter
+\def\cleardoublepage{\clearpage\if@twoside \ifodd\c@page\else
+    \hbox{}
+    \thispagestyle{empty} % Tady vypínáme vše pro tuto jednu stranu
+    \newpage
+    \if@twocolumn\hbox{}\newpage\fi\fi\fi}
+\makeatother
+
+% --- Fonts and language support for LuaLaTeX ---
+\usepackage{fontspec}
+\usepackage[english]{babel}
+\usepackage{etoolbox}
+\usepackage{sectsty}
+
+\newfontfamily\headingfont{Technika-Regular.ttf}[
+	Path = ./fonts/,
+	BoldFont = Technika-Bold.ttf,
+	ItalicFont = Technika-Italic.ttf
+]
+
+% 1. For all sections (\section, \subsection, ...)
+\allsectionsfont{\openright\headingfont}
+
+% 2. For the main title (\maketitle)
+% Add \headingfont at the beginning of the internal macros for title, author, and date
+\makeatletter
+\patchcmd{\@maketitle}{\@title}{\headingfont\@title}{}{}
+\patchcmd{\@maketitle}{\@author}{\headingfont\@author}{}{}
+\patchcmd{\@maketitle}{\@date}{\headingfont\@date}{}{}
+\makeatother
+
+% 3. For the Abstract heading% Customizing the abstract environment heading
+\addto\captionsczech{\renewcommand{\abstractname}{\headingfont Abstrakt}}
+\addto\captionsenglish{\renewcommand{\abstractname}{\headingfont Abstract}}
+
+% --- Code listings and tables ---
+\usepackage{float}
+\usepackage{minted} 
+\usepackage{booktabs} 
+\setminted{fontsize=\small, frame=lines, framesep=2mm}
+
+% --- Graphics and colors ---
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+% --- Headers and footers (standard fancyhdr) ---
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{} % Clean current settings
+
+% E = Even, O = Odd, L/C/R = Left/Center/Right
+\ifthenelse{\boolean{twosidemode}}{
+	% Settings for TWOSIDE (mirrored)
+    \fancyhead[RO,LE]{\headingfont \thepage}
+    \fancyhead[LO]{\headingfont \leftmark}
+    \fancyhead[RE]{\headingfont \rightmark}
+}{
+	% Settings for ONESIDE (all on the right/left as standard)
+    \fancyhead[R]{\headingfont \thepage}
+    \fancyhead[L]{\headingfont \leftmark}
+}
+\renewcommand{\headrulewidth}{0.5pt}
+
+\cfoot{\thepage} % Page number in the center of the footer
+
+% --- Hyperlinks ---
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+	citecolor=black,
+	filecolor=black,
+	linkcolor=black,
+	urlcolor=black
+}
+
+% --- Bibliography ---
+\usepackage[authoryear,round]{natbib}
+
+% --- Document metadata ---
+\title{
+	\begin{center}
+		\includegraphics[width=.4\textwidth]{logo_faculty}
+	\end{center}
+	\vspace{1cm}
+	\Huge Here you can insert the title of \\ your seminar paper
+}
+
+\author{
+	\Large \href{mailto:chadamir@fit.cvut.cz}{Miroslav Chada}
+	\vspace{1cm}
+}
+
+\date{
+	\large Course: Name of the course \\ 
+	\vspace{0.8cm}
+	\large Lecturer: Name of the lecturer \\
+	\vspace{1cm}
+	\today
+}
+
+\begin{document}
+
+	% --- FRONT MATTER ---
+	
+	\pagestyle{plain} % Disable headers with the line, keep only the page number at the bottom
+	\pagenumbering{roman} % Start Roman numbering (i, ii, iii...)
+
+	\maketitle
+	\thispagestyle{empty} % This specifically disables everything (number and line) on the title page
+	\setlength{\parindent}{0pt}
+	\setlength{\parskip}{0.5em}
+	
+	\vspace{1cm}
+	\begin{abstract}
+		Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+	\end{abstract}
+	
+	\newpage
+	\tableofcontents
+	\newpage
+	
+	% --- MAIN MATTER ---
+	\pagenumbering{arabic} % Reset page numbering to 1 and switch to Arabic numerals
+	\pagestyle{fancy} % Enable the fancy header with the line and sections
+
+	\section{Introduction}
+	\label{sec:introduction}
+	Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+	
+	\section{Foundations}
+	\label{sec:foundations}
+	Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+	
+	\section{Section about quotations}
+	\label{sec:section_about_quotations}
+	
+	In this section, an example for a literal quotation is given. 
+	
+	\begin{quotation}
+		\emph{``A persona is a rich picture of an imaginary person who represents your core user group.''}
+	\end{quotation}
+	
+	Sometimes you might want to make use of the authors name within the text. You can use the \texttt{cite} command like this: defined the concept of persona.
+	
+	According to APA format\footnote{American Psychological Association (APA)} there are some rules for citations. stated that the question is worth asking.
+	
+	\section{Section about references within the document}
+	\label{sec:section_about_references_within_the_document}
+	
+	If you want to refer to you own chapters, you can use the \texttt{ref} command:
+	\begin{itemize}
+		\item section~\ref{sec:section_about_quotations} on page \pageref{sec:section_about_quotations}
+	\end{itemize} 
+	
+	\subsection{Subsection within Foundations}
+	Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat.
+	
+	\section{Methodology}
+	\label{sec:methodology}
+	Lorem ipsum dolor sit amet, consetetur sadipscing elitr..
+	
+	\section{Arduino Implementation}
+	Příklad zdrojového kódu pro blikání LED diodou:
+	
+	% For Arduino/C++, we will use the 'cpp' lexer
+	\begin{listing}[H]
+		\begin{minted}[
+			linenos,           % line numbering
+			breaklines,        % line breaking
+			tabsize=2,         % tab size
+			frame=single,      % frame around the code
+			]{cpp}
+			void setup() {
+				pinMode(LED_BUILTIN, OUTPUT);
+			}
+			
+			void loop() {
+				digitalWrite(LED_BUILTIN, HIGH);
+				delay(1000); // Wait for a second
+				digitalWrite(LED_BUILTIN, LOW);
+				delay(1000); 
+			}
+		\end{minted}
+		\caption{Základní Blink sketch pro Arduino}
+		\label{lst:arduino_blink}
+	\end{listing}
+	
+	\section{Results}
+	\label{sec:results}
+	Lorem ipsum dolor sit amet, consetetur sadipscing elitr.
+	
+	\section{Conclusion}
+	\label{sec:conclusion}
+	Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat.
+	
+	\newpage 
+	
+	%\bibliographystyle{natdin}
+	%\bibliography{references} 
+	\addcontentsline{toc}{section}{References}
+	
+\end{document}

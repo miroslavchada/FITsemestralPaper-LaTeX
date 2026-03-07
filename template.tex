@@ -1,0 +1,165 @@
+\documentclass[a4paper]{article}
+
+% --- Nastavení okrajů ---
+\usepackage[a4paper, total={150mm,238mm}, left=30mm, top=32mm]{geometry}
+
+% --- Fonty a jazyková podpora pro LuaLaTeX ---
+\usepackage{fontspec}
+\usepackage[english]{babel}
+
+\setmainfont{Technika-Regular.ttf}[
+Path = ./fonts/,
+BoldFont = Technika-Bold.ttf,
+ItalicFont = Technika-Italic.ttf
+]
+
+% --- Programový kód a tabulky ---
+\usepackage{float}
+\usepackage{minted} 
+\usepackage{booktabs} 
+\usemintedstyle{bw} % střízlivý černobílý styl pro tisk
+\setminted{fontsize=\small, frame=lines, framesep=2mm}
+
+% --- Grafika a barvy ---
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+% --- Záhlaví a zápatí (standardní fancyhdr) ---
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{} % vyčistí aktuální nastavení
+\renewcommand{\headrulewidth}{0.3mm} % linka v záhlaví
+\lhead{Name of students}
+\rhead{\today}
+\cfoot{\thepage} % číslo strany
+
+% --- Odkazy ---
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+	citecolor=black,
+	filecolor=black,
+	linkcolor=black,
+	urlcolor=black
+}
+
+% --- Bibliografie ---
+\usepackage[authoryear,round]{natbib}
+
+% --- Metadata dokumentu ---
+\title{
+	\begin{center}
+		% \hspace*{1cm} % Odsadí logo o 1 cm doprava od levého okraje
+		\includegraphics[width=.4\textwidth]{logo_faculty}
+	\end{center}
+	\vspace{1cm}
+	\Huge Here you can insert the title of \\ your seminar paper
+}
+
+\author{
+	\Large \href{mailto:first.student@smail.fh-koeln.de}{First Student} 
+	\and 
+	\Large \href{mailto:second.student@smail.fh-koeln.de}{Second Student}
+	\vspace{1cm}
+}
+
+\date{
+	\large Module: Modulename \\ Course: Coursename \\ 
+	\vspace{0.8cm}
+	\large Lecturer: Name of the lecturer \\
+	\vspace{1cm}
+	\today
+}
+
+\begin{document}
+	
+	\maketitle
+	\setlength{\parindent}{0pt}
+	\setlength{\parskip}{0.5em}
+	
+	\vspace{1cm}
+	\begin{abstract}
+		Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+	\end{abstract}
+	
+	\newpage
+	\tableofcontents
+	\newpage
+	
+	\section{Introduction}
+	\label{sec:introduction}
+	Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+	
+	\section{Foundations}
+	\label{sec:foundations}
+	Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+	
+	\section{Section about quotations}
+	\label{sec:section_about_quotations}
+	
+	In this section, an example for a literal quotation is given. 
+	
+	\begin{quotation}
+		\emph{``A persona is a rich picture of an imaginary person who represents your core user group.''}
+	\end{quotation}
+	
+	Sometimes you might want to make use of the authors name within the text. You can use the \texttt{cite} command like this: \cite{Dix04} defined the concept of persona.
+	
+	According to APA format\footnote{American Psychological Association (APA)} there are some rules for citations. \citet[p. 86]{Baddeley:1974ts} stated that the question is worth asking.
+	
+	\section{Section about references within the document}
+	\label{sec:section_about_references_within_the_document}
+	
+	If you want to refer to you own chapters, you can use the \texttt{ref} command:
+	\begin{itemize}
+		\item section~\ref{sec:section_about_quotations} on page \pageref{sec:section_about_quotations}
+	\end{itemize} 
+	
+	\subsection{Subsection within Foundations}
+	Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat.
+	
+	\section{Methodology}
+	\label{sec:methodology}
+	Lorem ipsum dolor sit amet, consetetur sadipscing elitr..
+	
+	\section{Arduino Implementation}
+	Příklad zdrojového kódu pro blikání LED diodou:
+	
+	% Pro Arduino/C++ použijeme lexer 'cpp'
+	\begin{listing}[H]
+		\begin{minted}[
+			linenos,           % číslování řádků
+			breaklines,        % zalamování dlouhých řádků
+			tabsize=2,         % velikost tabulátoru
+			frame=single,      % rámeček kolem kódu
+			]{cpp}
+			void setup() {
+				pinMode(LED_BUILTIN, OUTPUT);
+			}
+			
+			void loop() {
+				digitalWrite(LED_BUILTIN, HIGH);
+				delay(1000); // Wait for a second
+				digitalWrite(LED_BUILTIN, LOW);
+				delay(1000); 
+			}
+		\end{minted}
+		\caption{Základní Blink sketch pro Arduino}
+		\label{lst:arduino_blink}
+	\end{listing}
+	
+	\section{Results}
+	\label{sec:results}
+	Lorem ipsum dolor sit amet, consetetur sadipscing elitr.
+	
+	\section{Conclusion}
+	\label{sec:conclusion}
+	Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat.
+	
+	\newpage 
+	
+	\bibliographystyle{natdin}
+	\bibliography{references} 
+	\addcontentsline{toc}{section}{References}
+	
+\end{document}
