@@ -8,15 +8,15 @@
 % --- Setting up margins ---
 % Parameters for geometry package, prepared separately to avoid issues with conditional logic
 \newcommand{\geomparams}{
-    a4paper, top=32mm, bottom=27mm
+	a4paper, top=32mm, bottom=27mm
 }
 
 \ifthenelse{\boolean{twosidemode}}{
 	% If true: add twoside and binding offset
-    \edef\finalgeom{\geomparams, left=20mm, right=20mm, twoside, bindingoffset=10mm}
+	\edef\finalgeom{\geomparams, left=20mm, right=20mm, twoside, bindingoffset=10mm}
 }{
 	% If false: just the basic settings
-    \edef\finalgeom{\geomparams, left=25mm, right=25mm}
+	\edef\finalgeom{\geomparams, left=25mm, right=25mm}
 }
 
 % Pass the parameters to the geometry package using expansion
@@ -25,20 +25,21 @@
 % --- Two-sided printing and intelligent start on the right side ---
 % Command for intelligent start on the right side
 \newcommand{\openright}{
-    \ifthenelse{\boolean{twosidemode}}{%
-        \cleardoublepage
-    }{
-        \clearpage
-    }
+	\ifthenelse{\boolean{twosidemode}}{%
+		\cleardoublepage
+	}{
+		\cleardoublepage
+		%\clearpage
+	}
 }
 
 % Adjustment for truly empty inserted page (without header and number)
 \makeatletter
 \def\cleardoublepage{\clearpage\if@twoside \ifodd\c@page\else
-    \hbox{}
-    \thispagestyle{empty} % Tady vypínáme vše pro tuto jednu stranu
-    \newpage
-    \if@twocolumn\hbox{}\newpage\fi\fi\fi}
+	\hbox{}
+	\thispagestyle{empty} % Tady vypínáme vše pro tuto jednu stranu
+	\newpage
+	\if@twocolumn\hbox{}\newpage\fi\fi\fi}
 \makeatother
 
 % --- Fonts and language support for LuaLaTeX ---
@@ -54,7 +55,7 @@
 ]
 
 % 1. For all sections (\section, \subsection, ...)
-\allsectionsfont{\openright\headingfont}
+\allsectionsfont{\openright\thispagestyle{plain}\headingfont}
 
 % 2. For the main title (\maketitle)
 % Add \headingfont at the beginning of the internal macros for title, author, and date
@@ -78,25 +79,47 @@
 \usepackage{graphicx}
 \usepackage{xcolor}
 
-% --- Headers and footers (standard fancyhdr) ---
+% --- Headers and footers (customized fancyhdr) ---
 \usepackage{fancyhdr}
-\pagestyle{fancy}
-\fancyhf{} % Clean current settings
 
-% E = Even, O = Odd, L/C/R = Left/Center/Right
-\ifthenelse{\boolean{twosidemode}}{
-	% Settings for TWOSIDE (mirrored)
-    \fancyhead[RO,LE]{\headingfont \thepage}
-    \fancyhead[LO]{\headingfont \leftmark}
-    \fancyhead[RE]{\headingfont \rightmark}
-}{
-	% Settings for ONESIDE (all on the right/left as standard)
-    \fancyhead[R]{\headingfont \thepage}
-    \fancyhead[L]{\headingfont \leftmark}
+% 1. Definition of the FANCY style (for regular pages - with header)
+\fancypagestyle{fancy} {
+	\fancyhf{} % Clean current settings
+	%\renewcommand{\headrulewidth}{0.5pt}
+	\renewcommand{\headrulewidth}{0pt}
+
+	% E = Even, O = Odd, L/C/R = Left/Center/Right
+	\ifthenelse{\boolean{twosidemode}}{
+		% Settings for TWOSIDE (mirrored)
+		\fancyhead[RO,LE]{\headingfont \thepage}
+		\fancyhead[LO,RE]{\headingfont \leftmark}
+	}{
+		% Settings for ONESIDE (all on the right/left as standard)
+		\fancyhead[R]{\headingfont \thepage}
+		\fancyhead[L]{\headingfont \leftmark}
+	}	
 }
-\renewcommand{\headrulewidth}{0.5pt}
 
-\cfoot{\thepage} % Page number in the center of the footer
+% Adjustment for the 'plain' style (at the beginning of chapters) - remove header and show page number in the footer
+\fancypagestyle{plain}{
+	\fancyhf{} % Clean current settings
+	%\renewcommand{\headrulewidth}{0.5pt}
+	\renewcommand{\headrulewidth}{0pt}
+
+	% E = Even, O = Odd, L/C/R = Left/Center/Right
+	\ifthenelse{\boolean{twosidemode}}{
+		% Settings for TWOSIDE (mirrored)
+		\fancyhead[RO,LE]{\headingfont \thepage}
+	}{
+		% Settings for ONESIDE (all on the right/left as standard)
+		\fancyhead[R]{\headingfont \thepage}
+	}	
+
+	% 2. Variant - no header, page number centered in the footer
+	%\fancyhf{}
+	%\fancyfoot[C]{{\headingfont \thepage}}
+	%\renewcommand{\headrulewidth}{0pt}
+}
 
 % --- Hyperlinks ---
 \usepackage{hyperref}
@@ -149,10 +172,9 @@
 	\begin{abstract}
 		Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
 	\end{abstract}
-	
-	\newpage
+
 	\tableofcontents
-	\newpage
+	\openright
 	
 	% --- MAIN MATTER ---
 	
@@ -165,8 +187,35 @@
 	
 	\section{Foundations}
 	\label{sec:foundations}
-	Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
 	
+	Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet efficitur elementum. Maecenas dapibus orci condimentum augue congue, nec eleifend nulla malesuada. Sed posuere volutpat mi volutpat semper. In id molestie felis. Aenean dignissim sodales augue, vitae eleifend neque dictum a. Vestibulum volutpat est id maximus auctor. Aliquam erat volutpat. Nulla sit amet posuere purus. Phasellus ornare ante vitae dapibus mattis. Sed vel lectus quis nunc aliquet consectetur a et velit. Cras at ullamcorper dui. Morbi sollicitudin augue volutpat, malesuada odio vel, iaculis felis. Duis semper scelerisque neque nec cursus.
+
+	Nulla luctus ac orci quis tincidunt. Donec at risus lectus. Cras molestie molestie dapibus. Suspendisse potenti. Phasellus et porta ex. Praesent ut volutpat lacus. Ut feugiat condimentum velit, nec tristique velit viverra in. Nullam tempor malesuada finibus. Integer mollis laoreet enim, eget vulputate elit vehicula et. Vestibulum faucibus quam eget purus gravida rutrum. Duis pellentesque libero metus, a ullamcorper nisi tempor nec. Cras fringilla faucibus malesuada.
+
+	Etiam dictum convallis leo. Sed eget tortor nec risus feugiat venenatis nec eu lorem. Ut viverra dui eu cursus eleifend. Fusce quis dolor nec purus rutrum placerat. Pellentesque vulputate nulla eget tortor imperdiet consequat. Vestibulum tincidunt id mi at ullamcorper. Donec eu fermentum tellus. Ut suscipit tellus at diam vulputate ullamcorper. Ut aliquet libero nec felis aliquam, a pharetra purus volutpat. Aliquam sed imperdiet quam.
+
+	Vestibulum a malesuada augue, non consectetur felis. Sed et scelerisque sem. Nulla in ultricies metus. Nulla vel congue mauris. Integer finibus sollicitudin lectus, sagittis sollicitudin felis posuere id. Morbi non orci vitae enim aliquet suscipit quis scelerisque ex. Quisque tellus risus, fermentum nec tellus id, ullamcorper aliquam ante. Pellentesque vitae lacus ut elit pellentesque consequat. Nulla facilisi. Etiam vestibulum cursus ante sagittis commodo. Sed aliquam, magna quis semper elementum, odio metus gravida tortor, sit amet porta nisl augue nec ante. Sed mattis tortor eget dictum ornare. Sed molestie, ipsum interdum porttitor condimentum, ipsum massa suscipit lectus, et molestie justo arcu in libero. Fusce fringilla dapibus lorem faucibus interdum.
+
+	Duis sollicitudin, felis id eleifend faucibus, dui purus cursus enim, sit amet dignissim neque nunc rutrum lacus. Mauris ornare lorem vel erat mollis eleifend. Aliquam et vulputate dui. In quis efficitur ligula. Fusce luctus libero quis nisl congue pharetra. Morbi aliquam nibh et leo semper, non congue dui ultrices. Nunc rhoncus nunc vitae convallis auctor. Nunc sit amet mauris laoreet, maximus velit et, accumsan orci. Maecenas varius eros justo, ut scelerisque velit commodo a. Nam volutpat magna elit, a aliquam mauris auctor rutrum. Praesent interdum a justo et vestibulum.
+
+	Quisque porttitor nisl sed sem tincidunt tristique. Curabitur convallis nulla turpis, et cursus nulla iaculis vitae. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Pellentesque ac urna ac ligula auctor dignissim. Suspendisse tristique erat in tortor venenatis blandit. Nulla libero ex, viverra quis neque in, congue imperdiet risus. Donec ut nisl ipsum. Mauris non nunc leo. Aliquam dapibus fermentum ante vel condimentum. Curabitur suscipit sagittis odio eget tincidunt. Ut tristique pulvinar sapien, eu ullamcorper ex tempor a. Nunc dapibus elementum egestas. Aliquam pharetra dui mi, egestas faucibus enim imperdiet mollis.
+
+	Morbi ac eleifend mi, id congue mauris. Donec elementum metus tortor, non pellentesque augue hendrerit sed. Mauris velit felis, sodales eget tortor id, mattis sollicitudin ex. Fusce ac erat orci. Etiam viverra enim nec vestibulum semper. Pellentesque eu finibus eros. In congue pharetra magna consectetur viverra. Aliquam vel nunc ex. Suspendisse potenti. Nullam feugiat id mauris ut blandit. Curabitur eget nulla feugiat diam placerat imperdiet. Donec et varius lorem. Praesent a iaculis dolor.
+
+	Ut nec porta leo. Fusce ut nibh in arcu vehicula lacinia eget vel diam. Cras tellus mi, tincidunt a nibh quis, ultricies lobortis sem. Etiam id sapien lorem. Suspendisse facilisis quis ligula vel lobortis. Curabitur interdum bibendum ligula, sed euismod diam gravida nec. Mauris scelerisque leo non urna imperdiet, sit amet iaculis ligula facilisis. Phasellus ornare diam sit amet lorem dignissim aliquam. Integer lacinia, turpis a sodales convallis, mi est euismod justo, vehicula semper enim nunc a eros. Donec placerat commodo ligula, ac sodales massa rhoncus fermentum. Sed dapibus sem eu lorem porta iaculis. Morbi turpis ex, elementum id eros vel, rhoncus facilisis lorem. Sed lobortis nisi a tellus euismod ullamcorper. Duis condimentum at massa at lacinia. Pellentesque fringilla interdum risus, nec varius risus.
+
+	Donec id mauris maximus, cursus augue vitae, faucibus turpis. Mauris ex justo, molestie quis urna sit amet, imperdiet dapibus lectus. Vestibulum sollicitudin mauris id mauris imperdiet rhoncus at non nisi. Vestibulum finibus turpis euismod mollis bibendum. Morbi nulla diam, pharetra sed suscipit at, maximus sit amet ligula. Duis rutrum feugiat purus. Integer dictum sem a tellus rhoncus rhoncus. Vestibulum tristique tincidunt tellus, a dignissim ante placerat tincidunt. Donec tincidunt nisl nec tincidunt ultricies. Donec quis est vitae dui laoreet tempor ut vel nisi. Praesent porttitor elit in nisi consectetur, quis sodales mauris egestas. Mauris lacinia, ante eu fermentum interdum, purus risus mattis risus, a tempus ligula libero at metus. Suspendisse venenatis faucibus massa quis volutpat. Aliquam erat volutpat.
+
+	Nam fringilla nibh blandit lectus fringilla, eget suscipit lectus tincidunt. Cras consectetur libero tincidunt, dapibus elit et, aliquet purus. Donec a mi accumsan, commodo magna quis, posuere nulla. Duis ipsum velit, porta ullamcorper tellus vitae, laoreet laoreet ante. In auctor bibendum elementum. Morbi venenatis tortor sed est volutpat malesuada. Fusce ac bibendum magna. Nam lacinia tortor a leo viverra egestas. Maecenas elementum sem at vestibulum hendrerit. Donec turpis purus, molestie eget eros in, eleifend imperdiet est. Nulla dolor mauris, semper non nunc a, sollicitudin mattis mauris. Pellentesque dolor sem, placerat sed blandit et, blandit imperdiet urna. Aenean congue gravida vestibulum. Nullam vel pellentesque lacus. Suspendisse et elit id massa fermentum faucibus vitae vitae sapien.
+
+	Sed eget feugiat risus. Fusce nec eros a ex faucibus tincidunt. Aenean massa tortor, ornare quis magna et, faucibus tempus diam. Suspendisse sollicitudin vel orci a dignissim. Nam varius in odio sit amet vehicula. Vestibulum lacinia, arcu in dictum venenatis, mi lacus auctor est, et cursus turpis arcu in velit. Donec aliquet odio et turpis bibendum accumsan. Aenean ullamcorper aliquam orci, vitae laoreet ex mattis vitae. Praesent ultricies auctor leo, eu dapibus quam vulputate eu. Curabitur auctor placerat felis, vitae suscipit dolor auctor dictum.
+
+	Fusce nec quam ante. Nam sit amet vulputate quam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Vivamus nec rutrum mauris. Sed facilisis sodales felis, quis luctus leo volutpat nec. Duis tempor non ex ut egestas. Praesent nibh neque, tincidunt vitae turpis id, auctor ultricies ante. Quisque mollis odio et magna cursus commodo. Nulla tincidunt iaculis felis, vel mattis sapien laoreet nec. Donec faucibus eget purus semper imperdiet. Integer pretium pellentesque enim, sit amet suscipit tortor imperdiet ut. Donec dapibus lectus magna, sit amet gravida metus ultrices id.
+
+	Mauris non sagittis erat, ut ultricies massa. Vivamus sollicitudin dolor in libero gravida, ut cursus dolor tristique. Vivamus pretium nibh vel est suscipit, sit amet blandit nulla egestas. Pellentesque erat ipsum, condimentum sit amet ultricies nec, iaculis eu ante. Vestibulum lobortis feugiat sapien, id commodo tellus fermentum ac. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nunc euismod orci ac scelerisque suscipit. In sit amet maximus lectus. Vivamus dapibus sapien felis, vulputate auctor erat faucibus sed.
+
+	Maecenas ultrices nulla vitae felis suscipit tempus. Vivamus vitae porttitor elit, quis iaculis ex. Curabitur tempor id mauris ac facilisis. Praesent et rhoncus quam. Praesent rhoncus nibh ac metus pulvinar, ut blandit turpis consequat. Praesent bibendum erat vitae dolor cursus, eu lobortis felis placerat. Maecenas faucibus turpis eu odio posuere euismod. Nunc non condimentum elit, sed posuere mauris. Aliquam in diam ullamcorper, sollicitudin urna ac, ultricies felis. Donec dolor elit, mollis vel ante id, hendrerit ullamcorper justo. Maecenas imperdiet luctus turpis, in egestas leo lacinia vel. Praesent sit amet feugiat libero. Curabitur placerat eget turpis accumsan fringilla. Cras dignissim mauris eu lorem tincidunt, at mattis sem pharetra. 
+
 	\section{Section about quotations}
 	\label{sec:section_about_quotations}
 	
