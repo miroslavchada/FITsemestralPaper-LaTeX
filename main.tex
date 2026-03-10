@@ -3,7 +3,7 @@
 \usepackage{ifthen}
 \newboolean{twosidemode}
 
-\setboolean{twosidemode}{false} % true = two-sided document (print), false = one-sided document (online)
+\setboolean{twosidemode}{true} % true = two-sided document (print), false = one-sided document (online)
 
 % --- Setting up margins ---
 % Parameters for geometry package, prepared separately to avoid issues with conditional logic
@@ -16,22 +16,11 @@
 	\edef\finalgeom{\geomparams, left=20mm, right=20mm, twoside, bindingoffset=10mm}
 }{
 	% If false: just the basic settings
-	\edef\finalgeom{\geomparams, left=25mm, right=25mm}
+	\edef\finalgeom{\geomparams, left=25mm, right=25mm, twoside=false }
 }
 
 % Pass the parameters to the geometry package using expansion
 \usepackage[\finalgeom]{geometry}
-
-% --- Two-sided printing and intelligent start on the right side ---
-% Command for intelligent start on the right side
-\newcommand{\openright}{
-	\ifthenelse{\boolean{twosidemode}}{%
-		\cleardoublepage
-	}{
-		\cleardoublepage
-		%\clearpage
-	}
-}
 
 % Adjustment for truly empty inserted page (without header and number)
 \makeatletter
@@ -55,7 +44,8 @@
 ]
 
 % 1. For all sections (\section, \subsection, ...)
-\allsectionsfont{\openright\thispagestyle{plain}\headingfont}
+\allsectionsfont{\thispagestyle{plain}\headingfont}
+\sectionfont{\cleardoublepage\thispagestyle{plain}\headingfont}
 
 % 2. For the main title (\maketitle)
 % Add \headingfont at the beginning of the internal macros for title, author, and date
@@ -140,18 +130,20 @@
 		\includegraphics[width=.4\textwidth]{logo_faculty}
 	\end{center}
 	\vspace{1cm}
-	\Huge Here you can insert the title of \\ your seminar paper
+	\Huge The best seminar paper title \\ of all time
 }
 
 \author{
-	\Large \href{mailto:chadamir@fit.cvut.cz}{Miroslav Chada}
+	\Large \href{mailto:first.student@fit.cvut.cz}{First Student}
+	\hspace{2em}
+	\Large \href{mailto:second.student@fit.cvut.cz}{Second Student}
 	\vspace{1cm}
 }
 
 \date{
-	\large Course: Name of the course \\ 
+	\large Department: \href{https://fit.cvut.cz/en/faculty/organizational-structure/departments/534-department-of-digital-design}{Name of the department} \\ Course: \href{https://bilakniha.cvut.cz/cs/predmet6541506.html}{Name of the course} \\ 
 	\vspace{0.8cm}
-	\large Lecturer: Name of the lecturer \\
+	\large Lecturer: {}{Name of the lecturer} \\
 	\vspace{1cm}
 	\today
 }
@@ -174,7 +166,7 @@
 	\end{abstract}
 
 	\tableofcontents
-	\openright
+	\cleardoublepage
 	
 	% --- MAIN MATTER ---
 	
