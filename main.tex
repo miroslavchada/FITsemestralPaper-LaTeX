@@ -3,7 +3,7 @@
 \usepackage{ifthen}
 \newboolean{twosidemode}
 
-\setboolean{twosidemode}{true} % true = two-sided document (print), false = one-sided document (online)
+\setboolean{twosidemode}{false} % true = two-sided document (print), false = one-sided document (online)
 
 % --- Setting up margins ---
 % Parameters for geometry package, prepared separately to avoid issues with conditional logic
@@ -127,24 +127,26 @@
 % --- Document metadata ---
 \title{
 	\begin{center}
-		\includegraphics[width=.4\textwidth]{logo_faculty}
+		\includegraphics[height=20mm]{logo_faculty}
 	\end{center}
-	\vspace{1cm}
-	\Huge The best seminar paper title \\ of all time
+	\vspace{20mm / 5} % Safe zone of the logo is 1/5 of the square's length
+	\large \href{https://fit.cvut.cz/en/faculty/organizational-structure/departments/534-department-of-digital-design}{Department} \\
+	\vspace{0.8cm}
+	\Huge The best seminar paper template \\ of all time
 }
 
 \author{
 	\Large \href{mailto:first.student@fit.cvut.cz}{First Student}
 	\hspace{2em}
 	\Large \href{mailto:second.student@fit.cvut.cz}{Second Student}
-	\vspace{1cm}
+	\vspace{0.8cm}
 }
 
 \date{
-	\large Department: \href{https://fit.cvut.cz/en/faculty/organizational-structure/departments/534-department-of-digital-design}{Name of the department} \\ Course: \href{https://bilakniha.cvut.cz/cs/predmet6541506.html}{Name of the course} \\ 
-	\vspace{0.8cm}
+	\large Course: \href{https://bilakniha.cvut.cz/cs/predmet6541506.html}{Name of the course} \\ 
+	\vspace{0.4cm}
 	\large Lecturer: {}{Name of the lecturer} \\
-	\vspace{1cm}
+	\vspace{1.2cm}
 	\today
 }
 
@@ -269,8 +271,8 @@
 	\section{Conclusion}
 	\label{sec:conclusion}
 	Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat.
-	
-	\newpage 
+
+	\cleardoublepage % Ensure the next section starts on a new page (and on the right side if two-sided) 
 	
 	%\bibliographystyle{natdin}
 	%\bibliography{references} 
