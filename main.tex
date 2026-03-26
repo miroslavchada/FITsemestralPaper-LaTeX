@@ -125,29 +125,47 @@
 \usepackage[authoryear,round]{natbib}
 
 % --- Document metadata ---
+\usepackage{authblk}
+\usepackage{titling}
+\usepackage{array} % Essential for advanced tabular column specs
+
 \title{
+	\headingfont
+	\vspace{-1.2cm} % Adjust vertical spacing to better fit the logo
 	\begin{center}
 		\includegraphics[height=20mm]{logo_faculty}
 	\end{center}
+	\vspace{-0.2cm} % Reverse the automatic spacing to bring the text closer to the logo
 	\vspace{20mm / 5} % Safe zone of the logo is 1/5 of the square's length
 	\large \href{https://fit.cvut.cz/en/faculty/organizational-structure/departments/534-department-of-digital-design}{Department} \\
-	\vspace{0.8cm}
+	\vspace{0.4cm * 3}
 	\Huge The best seminar paper template \\ of all time
 }
 
 \author{
+	\headingfont
 	\Large \href{mailto:first.student@fit.cvut.cz}{First Student}
 	\hspace{2em}
 	\Large \href{mailto:second.student@fit.cvut.cz}{Second Student}
+}
+
+% Customizing the title layout
+\preauthor{\begin{center}\large\lineskip 0.5em}
+\postauthor{\end{center}\par\vspace{0cm}
+    \headingfont
+	\large
+	\begin{center}
+        \begin{tabular}{r l}
+            Course:  & \href{https://bilakniha.cvut.cz/cs/}{Name of the course} \\[0.2cm]
+            Lecturer: & \href{https://usermap.cvut.cz/}{Name of the lecturer}
+        \end{tabular}
+    \end{center}\par
 	\vspace{0.8cm}
 }
 
 \date{
-	\large Course: \href{https://bilakniha.cvut.cz/cs/predmet6541506.html}{Name of the course} \\ 
-	\vspace{0.4cm}
-	\large Lecturer: {}{Name of the lecturer} \\
-	\vspace{1.2cm}
-	\today
+	\headingfont
+	\large \today
 }
 
 \begin{document}
@@ -162,10 +180,12 @@
 	\setlength{\parindent}{0pt}
 	\setlength{\parskip}{0.5em}
 	
-	\vspace{1cm}
+	\vfill
+
 	\begin{abstract}
 		Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
 	\end{abstract}
+	\vspace{1.5cm}
 
 	\tableofcontents
 	\cleardoublepage
